@@ -253,6 +253,7 @@ npm run seed
 
 ### Deployment Notes
 
+- Root-level `vercel.json` contains the multi-service deployment mapping.
 - Backend routing is configured by `backend/vercel.json`.
 - Frontend SPA routing is configured by `frontend/vercel.json`.
 - Serverless entrypoint is `backend/api/index.js`.
