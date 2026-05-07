@@ -1,6 +1,5 @@
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 dotenv.config();
 
@@ -21,8 +20,9 @@ const seedDatabase = async () => {
     ActivityLog.deleteMany()
   ]);
 
-  const admin = await User.create({ fullName: 'System Admin', email: 'admin@library.com', password: 'Umar@2019', role: 'admin', phone: '07048140838', registrationNumber: 'ADMIN001', department: 'Administration', level: 'N/A', address: 'Main Campus', status: 'active' });
-  const librarian = await User.create({ fullName: 'Main Librarian', email: 'librarian@library.com', password: 'Umar@2019', role: 'librarian', phone: '08141252763', registrationNumber: 'LIB001', department: 'Library Science', level: 'N/A', address: 'Library Block', status: 'active' });
+  const admin = await User.create({ fullName: 'System Admin', email: 'umarkhalifaabubakar0@gmail.com', password: 'Umar@2019', role: 'admin', phone: '07048140838', registrationNumber: 'ADMIN001', department: 'Administration', level: 'N/A', address: 'Main Campus', status: 'active' });
+  const librarian = await User.create({ fullName: 'Main Librarian', email: 'bargazal002@gmail.com', password: 'Umar@2019', role: 'librarian', phone: '08141252763', registrationNumber: 'LIB001', department: 'Library Science', level: 'N/A', address: 'Library Block', status: 'active' });
+  const student = await User.create({ fullName: 'Sample Student', email: 'student@library.com', password: 'Umar@2019', role: 'student', phone: '08000000000', registrationNumber: 'STU001', department: 'Computer Science', level: 'ND 1', address: 'Student Hostel', status: 'active' });
   
   const categories = await Category.insertMany([
     { name: 'Computer Science', description: 'Programming and computing books' },
