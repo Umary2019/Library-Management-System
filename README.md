@@ -109,12 +109,6 @@ CLIENT_URL=http://localhost:5173
 VITE_API_URL=http://localhost:5000/api
 ```
 
-## Default Login Accounts
-
-- Admin: `umarkhalifaabubakar0@gmail.com` / `Umar@2019`
-- Librarian: `bargazal002@gmail.com` / `Umar@2019`
-- Students register from the registration page.
-
 ## API Summary
 
 ### Auth
@@ -175,7 +169,7 @@ VITE_API_URL=http://localhost:5000/api
 2. Run the backend server.
 3. Run the frontend app.
 4. Open the frontend URL shown by Vite.
-5. Log in using one of the default accounts.
+5. Log in using your registered account.
 
 ## Deploy to Vercel
 

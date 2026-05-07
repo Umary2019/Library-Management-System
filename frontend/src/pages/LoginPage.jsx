@@ -83,7 +83,7 @@ export default function LoginPage() {
           </p>
 
           <div className="mt-8 rounded-3xl bg-slate-50 p-4 text-sm text-slate-600">
-            Default accounts: umarkhalifaabubakar0@gmail.com, bargazal002@gmail.com. Students register from the sign-up page.
+            Use your registered account credentials to sign in.
           </div>
         </div>
       </div>
