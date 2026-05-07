@@ -29,12 +29,16 @@ if (process.env.VERCEL_URL) {
 }
 
 const allowedOrigins = [...new Set(configuredOrigins)];
+const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS === 'true';
 
 app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      const isAllowedPreview =
+        allowVercelPreviews && origin && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+      if (!origin || allowedOrigins.includes(origin) || isAllowedPreview) {
         return callback(null, true);
       }
       return callback(new Error('Not allowed by CORS'));

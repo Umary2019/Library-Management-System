@@ -177,6 +177,87 @@ VITE_API_URL=http://localhost:5000/api
 4. Open the frontend URL shown by Vite.
 5. Log in using one of the default accounts.
 
+## Deploy to Vercel
+
+Deploy this system as two Vercel projects:
+- `backend` as a Node.js Serverless Function API
+- `frontend` as a Vite static site
+
+### 1. Prepare MongoDB Atlas
+
+- Create a MongoDB Atlas database (or use an existing cluster).
+- Whitelist Vercel network access in Atlas (temporarily `0.0.0.0/0` or a stricter policy if available).
+- Create a database user and URL-encode special characters in password.
+
+### 2. Deploy backend (`backend/`)
+
+1. In Vercel, create a new project and set **Root Directory** to `backend`.
+2. Keep framework as **Other** (auto-detected Node).
+3. Add environment variables:
+
+```env
+MONGO_URI=your_atlas_connection_string
+JWT_SECRET=a_long_random_secret
+JWT_EXPIRES_IN=7d
+CLIENT_URL=https://your-frontend.vercel.app
+CLIENT_URLS=https://your-frontend.vercel.app
+ALLOW_VERCEL_PREVIEWS=true
+```
+
+4. Deploy and copy backend URL, for example:
+
+```text
+https://your-backend.vercel.app
+```
+
+5. Verify health endpoint:
+
+```text
+https://your-backend.vercel.app/api/health
+```
+
+### 3. Deploy frontend (`frontend/`)
+
+1. Create another Vercel project and set **Root Directory** to `frontend`.
+2. Framework preset should be **Vite**.
+3. Add environment variable:
+
+```env
+VITE_API_URL=https://your-backend.vercel.app/api
+```
+
+4. Deploy and open the frontend URL.
+
+### 4. Update backend CORS allow-list
+
+- Add your final frontend production URL and preview URL policy in backend env:
+
+```env
+CLIENT_URLS=https://your-frontend.vercel.app
+ALLOW_VERCEL_PREVIEWS=true
+```
+
+- Redeploy backend after env updates.
+
+### 5. Seed data (one-time)
+
+Because Vercel functions are stateless, run seed from local machine against Atlas:
+
+```bash
+cd backend
+cp .env.example .env
+# set .env MONGO_URI/JWT values to your Atlas deployment values
+npm install
+npm run seed
+```
+
+### Deployment Notes
+
+- Backend routing is configured by `backend/vercel.json`.
+- Frontend SPA routing is configured by `frontend/vercel.json`.
+- Serverless entrypoint is `backend/api/index.js`.
+- Express app is exported from `backend/app.js` for Vercel and started locally via `backend/server.js`.
+
 ## Future Improvements
 
 - PDF export implementation for reports
