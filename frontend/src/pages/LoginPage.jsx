@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiBookOpen } from 'react-icons/fi';
+import { FiMail, FiLock, FiBookOpen, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (event) => setForm((value) => ({ ...value, [event.target.name]: event.target.value }));
 
@@ -67,7 +68,23 @@ export default function LoginPage() {
               <label className="mb-2 block text-sm font-semibold text-slate-700">Password</label>
               <div className="relative">
                 <FiLock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input className="input-field pl-11" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Enter password" required />
+                <input
+                  className="input-field pl-11 pr-11"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </button>
               </div>
             </div>
             <button disabled={loading} className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-70" type="submit">

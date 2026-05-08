@@ -6,6 +6,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 
 const connectDB = require('./config/database');
+const mongoose = require('mongoose');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -17,7 +18,16 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
-connectDB();
+// Start DB connection (non-blocking). Add a fast-fail middleware so API requests
+// return 503 when the DB is not connected, preventing long timeouts on serverless.
+connectDB().catch(() => {});
+
+app.use('/api', (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ success: false, message: 'Service unavailable (DB not connected)' });
+  }
+  next();
+});
 
 const configuredOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || 'http://localhost:5173')
   .split(',')
