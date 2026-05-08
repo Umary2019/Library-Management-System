@@ -1,29 +1,57 @@
 import axios from 'axios';
 
-const resolveApiBaseUrl = () => {
+const resolveApiConfig = () => {
   const configuredUrl = import.meta.env.VITE_API_URL?.trim();
   if (configuredUrl) {
-    return configuredUrl;
+    return { primary: configuredUrl, fallback: null };
   }
 
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
     const isLocalDevHost = hostname === 'localhost' || hostname === '127.0.0.1';
+    const isVercelHost = hostname.endsWith('.vercel.app');
 
     if (isLocalDevHost) {
-      return 'http://localhost:5000/api';
+      return { primary: 'http://localhost:5000/api', fallback: null };
     }
 
-    // For deployed builds without VITE_API_URL, use same-origin API routes.
-    return '/api';
+    // Supports both monorepo route prefix and same-origin API rewrites.
+    if (isVercelHost) {
+      return { primary: '/_/backend/api', fallback: '/api' };
+    }
+
+    return { primary: '/api', fallback: null };
   }
 
-  return '/api';
+  return { primary: '/api', fallback: null };
 };
 
+const { primary: primaryBaseURL, fallback: fallbackBaseURL } = resolveApiConfig();
+
 const api = axios.create({
-  baseURL: resolveApiBaseUrl()
+  baseURL: primaryBaseURL
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const requestConfig = error?.config;
+    const shouldRetryWithFallback =
+      fallbackBaseURL &&
+      requestConfig &&
+      !requestConfig.__retriedWithFallback &&
+      requestConfig.baseURL === primaryBaseURL &&
+      (!error.response || error.response.status === 404);
+
+    if (shouldRetryWithFallback) {
+      requestConfig.__retriedWithFallback = true;
+      requestConfig.baseURL = fallbackBaseURL;
+      return api.request(requestConfig);
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');

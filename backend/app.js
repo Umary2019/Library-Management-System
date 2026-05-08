@@ -29,7 +29,7 @@ if (process.env.VERCEL_URL) {
 }
 
 const allowedOrigins = [...new Set(configuredOrigins)];
-const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS === 'true';
+const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS !== 'false';
 
 app.use(helmet());
 app.use(
