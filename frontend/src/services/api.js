@@ -41,7 +41,12 @@ api.interceptors.response.use(
       requestConfig &&
       !requestConfig.__retriedWithFallback &&
       requestConfig.baseURL === primaryBaseURL &&
-      (!error.response || error.response.status === 404);
+      (
+        !error.response ||
+        error.response.status === 404 ||
+        // Retry with fallback when the primary returns a server error.
+        (error.response.status && error.response.status >= 500)
+      );
 
     if (shouldRetryWithFallback) {
       requestConfig.__retriedWithFallback = true;
