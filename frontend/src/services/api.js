@@ -32,6 +32,12 @@ const api = axios.create({
   baseURL: primaryBaseURL
 });
 
+// Expose chosen endpoints for easier debugging in browser console
+try {
+  // eslint-disable-next-line no-console
+  console.info('[api] primaryBaseURL=', primaryBaseURL, 'fallbackBaseURL=', fallbackBaseURL);
+} catch (e) {}
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -51,6 +57,10 @@ api.interceptors.response.use(
     if (shouldRetryWithFallback) {
       requestConfig.__retriedWithFallback = true;
       requestConfig.baseURL = fallbackBaseURL;
+      try {
+        // eslint-disable-next-line no-console
+        console.warn('[api] primary failed, retrying with fallback', { url: requestConfig.url, status: error?.response?.status });
+      } catch (e) {}
       return api.request(requestConfig);
     }
 
