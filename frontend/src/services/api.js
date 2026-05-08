@@ -15,9 +15,9 @@ const resolveApiConfig = () => {
       return { primary: 'http://localhost:5000/api', fallback: null };
     }
 
-    // Supports both monorepo route prefix and same-origin API rewrites.
+    // Vercel deployment uses the backend service prefix directly.
     if (isVercelHost) {
-      return { primary: '/_/backend/api', fallback: '/api' };
+      return { primary: '/_/backend/api', fallback: null };
     }
 
     return { primary: '/api', fallback: null };

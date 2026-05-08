@@ -22,11 +22,15 @@ const app = express();
 // return 503 when the DB is not connected, preventing long timeouts on serverless.
 connectDB().catch(() => {});
 
-app.use('/api', (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
+app.use('/api', async (req, res, next) => {
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      await connectDB();
+    }
+    next();
+  } catch (error) {
     return res.status(503).json({ success: false, message: 'Service unavailable (DB not connected)' });
   }
-  next();
 });
 
 const configuredOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || 'http://localhost:5173')
